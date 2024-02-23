@@ -3,8 +3,8 @@ Repository containing the Arduino code behind the Kaki paragliding vario.
 
 ## References:
 This project is based on several similar projects found online:
-    -  XCTRACK_vario -> excellent instructions on how to build a bluetooth vario that connects to XC Track. https://gitlab.com/dvarrel/XCTRACK_vario 
-    -  Variometer for Paragliding by laisch -> not on github but https://www.instructables.com/Variometer-for-Paragliding/ excellent result, hoping to achieve something similar but with Bluetooth. Note his code is too big
+-  XCTRACK_vario -> excellent instructions on how to build a bluetooth vario that connects to XC Track. https://gitlab.com/dvarrel/XCTRACK_vario 
+-  Variometer for Paragliding by laisch -> not on github but https://www.instructables.com/Variometer-for-Paragliding/ excellent result, hoping to achieve something similar but with Bluetooth. Note his code is too big
 
 ## Product
 The Kaki vario should be a small, lightweight and affordable vario. We are building it out of Arduino components, as they are easy and cheap to come across.
