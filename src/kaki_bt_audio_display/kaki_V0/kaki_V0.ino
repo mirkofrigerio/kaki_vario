@@ -24,6 +24,23 @@ BUZZER
   BUZZER - Nano D9
   BUZZER - Nano D10
 
+Double Toggle SLIDE SWITCH (3 positions, 8 pins)
+
+First row: controls On - OFF
+
+I   I   I    I
+Vin Vin B+
+
+B- ---> Nano GND
+
+
+Second row: controls mode
+
+I  I  I     I
+  GND D
+
+Remember INPUT_PULLUP when using pinMode
+
 */
 
 
@@ -34,6 +51,7 @@ BUZZER
 #define TX 12                     // MISO on ISCP (RX module bluetooth) // Or 11?
 #define BUZZER_PIN 9
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
+#define SWITCH_PIN 3
 
 // IC2 addresses
 #define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
@@ -60,10 +78,6 @@ Adafruit_BMP280 bmp;
 // Battery voltage
 VoltageReference vRef;
 
-// Define pin for the button
-const int buttonPin = 4; 
-// Variable to store the previous state of the button
-int prevButtonState = HIGH;
 
 // standard settings - will be changed by user through button
 boolean bluetooth_on = true;  // Bluetooth on / off
@@ -179,22 +193,26 @@ void setup()   {
 
   // Buzzer output on Pin 9 for toneAC
   pinMode(BUZZER_PIN, OUTPUT);
-
-  // Set the Button pin as an input
-  pinMode(buttonPin, INPUT);
+  
+  // Slide Switch 
+  pinMode(SWITCH_PIN, INPUT_PULLUP);
 
   // wait until the Sensor is ready
   welcomeDisplay();
 
+  // to avoid the vario from going crazy when turned on, we fill our array with current alt measurm.t
+  float setup_alt = bmp.readAltitude();
+  for (int i=0;i<51;i++) {alt[i] = setup_alt;
+  };
 }
 
 /*
 TODO:
   * round climb rate to the first decimal, like +1.33 m/s -> 1.30 m/s 
-  * test bluetooth - DONE
   * pinout -- DONE
   * test audio -- DONE works when bluetooth is off? weird. Need to investigate
-  * add button to switch between modes = DONE -check state changes as expected
+  * How will we know the battery % if the arduino is connected through voltage regulator board??
+  * Initial climb rate is due to initiating array for altitude values with zeros. If we set it to the current altitude in Setup() maybe we fix vario going crazy after turn on?
   * profits??
 */
 
@@ -216,15 +234,17 @@ void loop() {
   vario = VarioMSCalculation(altitude);
 
   // Read the current state of the button and cycle through bluetooth and audio mode
-  int buttonState = digitalRead(buttonPin);
+  int switchState = digitalRead(SWITCH_PIN);
   // Check if the button is pressed (LOW) and the previous state was not pressed
-  if (buttonState == LOW && prevButtonState == HIGH) {
+  if (switchState == HIGH) {
     // Toggle the value of bluetooth_mode
-    bluetooth_on = !bluetooth_on;
-    beep_on = !beep_on;
+    bluetooth_on = true,
+    beep_on = false;
   }
-  // Update the previous button state
-  prevButtonState = buttonState;
+  else {
+    bluetooth_on = false,
+    beep_on = true;    
+  }
 
   // bluetooth and audio
   if (bluetooth_on){
