@@ -12,7 +12,7 @@ BMP
 HC-05
   HC-05 5v - Nano 5v // module is 3.3v but voltage divider on board. Better to provide 3v3 instead maybe? 
   HC-05 GND - Nano GND
-  HC-05 RX - Nano MISO ?? // or D11 (soft TX)
+  HC-05 RX - Nano TX // alternatively use MISO or D pin. Need softwareSerial for those tho
 
 OLED
   OLED VCC - Nano 3v3
@@ -29,7 +29,7 @@ Double Toggle SLIDE SWITCH (3 positions, 8 pins)
 First row: controls On - OFF
 
 I   I   I    I
-5V  5V  B+
+vin vin B+
 
 B- ---> Nano GND
 
@@ -46,9 +46,6 @@ Remember INPUT_PULLUP when using pinMode
 
 // hardcoded variables
 #define BLUETOOTH_SPEED 9600      //bluetooth speed (9600 by default)
-#define FREQUENCY 20  // freq output in Hz : uncomment this line and adjust value for frequency mode
-#define RX 11                     // not used (TX module bluetooth) // 0r 10
-#define TX 12                     // MISO on ISCP (RX module bluetooth) // Or 11?
 #define BUZZER_PIN 9
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 #define SWITCH_PIN 3
@@ -58,16 +55,11 @@ Remember INPUT_PULLUP when using pinMode
 #define BMP_ADDRESS 0x76 // Default address, if it doesn't work try 0x77
 
 // libraries 
-// #include <Wire.h>
-#include <SoftwareSerial.h>
 #include <Adafruit_BMP280.h>
 #include "SSD1306AsciiAvrI2c.h"
 #include <VoltageReference.h>
 #include <Adafruit_BMP280.h>
 #include <toneAC.h>
-
-// bluetooth - RX not connected
-SoftwareSerial BTserial(RX, TX); 
 
 // oled display
 SSD1306AsciiAvrI2c oled;
@@ -175,17 +167,15 @@ const unsigned char epd_bitmap_welcome [] PROGMEM = {
 };
 
 
-void setup()   {                
-  Serial.begin(9600);
+void setup()   { 
+  // Initialize serial (Bluetooth)        
+  Serial.begin(BLUETOOTH_SPEED);
 
   //Voltage Measurement
   vRef.begin();
 
   // Initialize BMP Pressure and Temp Sensor. 
   bmp.begin(0x76);
-
-  // Initialize Bluetooth
-  BTserial.begin(BLUETOOTH_SPEED); 
 
   // Initialize 128x64 OLED Screen
   oled.begin(&Adafruit128x64, SCREEN_ADDRESS);
@@ -416,7 +406,7 @@ void LK8000_sentences(uint32_t pressure, int8_t temperature) {
   strcat(str_out,s);
   
   // now that we have str_out we need to pass it to the bluetooth module
-  BTserial.println(str_out);
+  Serial.println(str_out);
 }
 
 
