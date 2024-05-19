@@ -29,9 +29,9 @@ Double Toggle SLIDE SWITCH (3 positions, 8 pins)
 First row: controls On - OFF
 
 I   I   I    I
-vin vin B+
+vin vin O+
 
-B- ---> Nano GND
+O- ---> Nano GND
 
 
 Second row: controls mode

@@ -20,14 +20,12 @@
 
 #define FREQUENCY 20  // freq output in Hz : uncomment this line and adjust value for frequency mode
 
-#include <avr/wdt.h>
 #define RX 11                     // not used (TX module bluetooth)
 #define TX 12                     // MISO on ISCP (RX module bluetooth)
 #include <SoftwareSerial.h>
 SoftwareSerial BTserial(RX, TX);  // RX not connected
 
 #include <Wire.h>
-#include <SPI.h> //needed?
 #include <Adafruit_BMP280.h>
 
 // // Pressure and Temp sensor
